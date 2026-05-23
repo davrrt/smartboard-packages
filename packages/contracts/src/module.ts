@@ -6,6 +6,7 @@ export interface NavItem {
   icon?: string;
   route: string;
   requires?: PermissionKey;
+  minLevel?: number;
 }
 
 export interface ModuleDescriptor {
@@ -13,6 +14,8 @@ export interface ModuleDescriptor {
   version: string;
   permissions: PermissionKey[];
   navigation: NavItem[];
+  minLevel?: number;
+  requiredTier?: string; // hook payant — réservé, NON appliqué (phase billing)
 }
 
 export const navItemSchema = z.object({
@@ -20,6 +23,7 @@ export const navItemSchema = z.object({
   icon: z.string().optional(),
   route: z.string(),
   requires: z.string().optional(),
+  minLevel: z.number().optional(),
 });
 
 export const moduleDescriptorSchema = z.object({
@@ -27,4 +31,6 @@ export const moduleDescriptorSchema = z.object({
   version: z.string(),
   permissions: z.array(z.string()),
   navigation: z.array(navItemSchema),
+  minLevel: z.number().optional(),
+  requiredTier: z.string().optional(),
 });

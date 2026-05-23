@@ -1,5 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
-import { RequirePermissions } from "@smartboard/contracts";
+import { RequirePermissions, RequireLevel } from "@smartboard/contracts";
 import { DemoService } from "./demo.service";
 
 @Controller("demo")
@@ -10,5 +10,11 @@ export class DemoController {
   @RequirePermissions("demo.read")
   list() {
     return this.demo.list();
+  }
+
+  @Get("admin")
+  @RequireLevel(3)
+  adminInfo() {
+    return { message: "Zone admin (niveau 3+)" };
   }
 }

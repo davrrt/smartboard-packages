@@ -10,4 +10,9 @@ describe("demoDescriptor", () => {
     expect(demoDescriptor.permissions).toContain("demo.read");
     expect(demoDescriptor.navigation[0].route).toBe("/demo");
   });
+  it("expose un niveau de module et une entrée gardée par niveau", () => {
+    expect(demoDescriptor.minLevel).toBe(1);
+    const admin = demoDescriptor.navigation.find((n) => n.route === "/demo/admin");
+    expect(admin?.minLevel).toBe(3);
+  });
 });
