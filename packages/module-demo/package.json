@@ -7,6 +7,11 @@
       "default": "./dist/backend/index.js"
     }
   },
+  "typesVersions": {
+    "*": {
+      "backend": ["dist/backend/index.d.ts"]
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run"
