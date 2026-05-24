@@ -70,6 +70,18 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1
 
+  packages/sdk:
+    devDependencies:
+      '@smartboard/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1
+
 packages:
 
   '@borewit/text-codec@0.2.2':
