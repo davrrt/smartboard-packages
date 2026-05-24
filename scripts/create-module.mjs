@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Générateur de module Smartboard.
 // Usage : pnpm gen:module <nom-en-kebab-case>   (ex: notes, patient-suivi)
-import { mkdirSync, writeFileSync, existsSync } from "node:fs";
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -17,6 +17,13 @@ const Pascal = parts.map((s) => s[0].toUpperCase() + s.slice(1)).join("");
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dir = join(root, "packages", `module-${name}`);
+
+// Estampille la version de contrat courante (M1) : le module nait en ciblant le
+// contrat du socle au moment de sa génération.
+const contractVersion =
+  (readFileSync(join(root, "packages/contracts/src/version.ts"), "utf8").match(
+    /CONTRACT_VERSION\s*=\s*"([^"]+)"/,
+  ) || [])[1] || "1.0.0";
 if (existsSync(dir)) {
   console.error(`Le module existe déjà : ${dir}`);
   process.exit(1);
@@ -71,6 +78,7 @@ const files = {
 export const ${camel}Descriptor: ModuleDescriptor = {
   id: "${name}",
   version: "0.1.0",
+  contractVersion: "${contractVersion}", // version du contrat @smartboard ciblée — vérifiée au boot (M1)
   minLevel: 1, // niveau minimum requis pour voir/utiliser ce module
   permissions: ["${name}.read"],
   navigation: [

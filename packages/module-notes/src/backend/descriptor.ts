@@ -3,6 +3,7 @@ import type { ModuleDescriptor } from "@smartboard/contracts";
 export const notesDescriptor: ModuleDescriptor = {
   id: "notes",
   version: "0.1.0",
+  contractVersion: "1.0.0", // version du contrat @smartboard ciblée — vérifiée au boot (M1)
   minLevel: 1, // niveau minimum requis pour voir/utiliser ce module
   permissions: ["notes.read"],
   navigation: [

@@ -12,6 +12,7 @@ export interface NavItem {
 export interface ModuleDescriptor {
   id: string;
   version: string;
+  contractVersion?: string; // version semver du contrat ciblée — vérifiée au boot (M1)
   permissions: PermissionKey[];
   navigation: NavItem[];
   minLevel?: number;
@@ -29,6 +30,7 @@ export const navItemSchema = z.object({
 export const moduleDescriptorSchema = z.object({
   id: z.string(),
   version: z.string(),
+  contractVersion: z.string().optional(),
   permissions: z.array(z.string()),
   navigation: z.array(navItemSchema),
   minLevel: z.number().optional(),
