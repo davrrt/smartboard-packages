@@ -27,4 +27,16 @@ describe("createSmartboardClient", () => {
     const client = createSmartboardClient({ baseUrl: "http://x", getToken: () => "admin" });
     await expect(client.getManifest()).rejects.toBeInstanceOf(SmartboardApiError);
   });
+
+  it("updateBranding fait un PATCH /v1/admin/branding avec body + Bearer", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({}) });
+    vi.stubGlobal("fetch", fetchMock);
+    const client = createSmartboardClient({ baseUrl: "http://x", getToken: () => "admin" });
+    await client.updateBranding({ appName: "ACME", primaryColor: "#123456" });
+    expect(fetchMock).toHaveBeenCalledWith("http://x/v1/admin/branding", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer admin" },
+      body: JSON.stringify({ appName: "ACME", primaryColor: "#123456" }),
+    });
+  });
 });
