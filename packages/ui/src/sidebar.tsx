@@ -48,7 +48,6 @@ export function Sidebar({ logo, items, activePath, linkComponent, footer, collap
     >
       <div className="flex h-16 items-center gap-2 px-4">
         {logo.src ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img src={logo.src} alt="" className="h-8 w-8 object-contain" />
         ) : (
           <div className="h-8 w-8 shrink-0 rounded bg-primary" />

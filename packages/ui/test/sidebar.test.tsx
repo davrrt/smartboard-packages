@@ -35,4 +35,12 @@ describe("Sidebar", () => {
     render(<Sidebar logo={{ appName: "ACME" }} items={items} activePath="/demo" footer={<div>FOOT</div>} />);
     expect(screen.getByText("FOOT")).toBeInTheDocument();
   });
+
+  it("utilise le linkComponent injecté", () => {
+    const CustomLink = ({ href, children }: any) => (
+      <a href={href} data-custom="1">{children}</a>
+    );
+    render(<Sidebar logo={{ appName: "ACME" }} items={items} activePath="/demo" linkComponent={CustomLink} />);
+    expect(screen.getAllByRole("link")[0]).toHaveAttribute("data-custom", "1");
+  });
 });

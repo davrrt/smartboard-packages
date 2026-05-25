@@ -23,6 +23,10 @@ describe("Button", () => {
     render(<Button variant="ghost">x</Button>);
     expect(screen.getByRole("button").className).not.toContain("bg-primary");
   });
+  it("ghost danger : texte danger", () => {
+    render(<Button variant="ghost" tone="danger">x</Button>);
+    expect(screen.getByRole("button").className).toContain("text-danger");
+  });
   it("loading : disabled", () => {
     render(<Button loading>Go</Button>);
     expect(screen.getByRole("button")).toBeDisabled();
