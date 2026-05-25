@@ -1,0 +1,15 @@
+/* Tokens sémantiques dérivés de la couleur primaire du tenant (--sb-primary).
+   color-mix → nuances calculées au rendu, sans recompilation (white-label runtime). */
+@theme {
+  --color-primary:        var(--sb-primary, #4f46e5);
+  --color-primary-hover:  color-mix(in oklch, var(--sb-primary, #4f46e5) 88%, black);
+  --color-primary-active: color-mix(in oklch, var(--sb-primary, #4f46e5) 78%, black);
+  --color-on-primary:     #ffffff;
+  --color-fg:             #171717;
+  --color-muted:          #6b7280;
+  --color-surface:        #ffffff;
+  --color-surface-hover:  color-mix(in oklch, var(--sb-primary, #4f46e5) 8%, white);
+  --color-border-card:    color-mix(in oklch, var(--sb-primary, #4f46e5) 18%, white);
+  --color-danger:         #dc2626;
+  --color-danger-hover:   color-mix(in oklch, #dc2626 88%, black);
+}
