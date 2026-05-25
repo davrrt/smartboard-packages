@@ -39,4 +39,45 @@ describe("createSmartboardClient", () => {
       body: JSON.stringify({ appName: "ACME", primaryColor: "#123456" }),
     });
   });
+
+  it("listUsers GET /v1/admin/users", async () => {
+    const data = [{ id: "u1", email: "a@b.co", displayName: "A", roles: ["admin"], level: 5 }];
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => data });
+    vi.stubGlobal("fetch", fetchMock);
+    const c = createSmartboardClient({ baseUrl: "http://x", getToken: () => "admin" });
+    expect(await c.listUsers()).toEqual(data);
+    expect(fetchMock).toHaveBeenCalledWith("http://x/v1/admin/users", { headers: { Authorization: "Bearer admin" } });
+  });
+
+  it("listRoles GET /v1/admin/roles", async () => {
+    const data = [{ key: "admin", label: "Administrateur", level: 5 }];
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => data });
+    vi.stubGlobal("fetch", fetchMock);
+    const c = createSmartboardClient({ baseUrl: "http://x", getToken: () => "admin" });
+    expect(await c.listRoles()).toEqual(data);
+    expect(fetchMock).toHaveBeenCalledWith("http://x/v1/admin/roles", { headers: { Authorization: "Bearer admin" } });
+  });
+
+  it("assignRole POST .../roles avec body", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 201, json: async () => ({}) });
+    vi.stubGlobal("fetch", fetchMock);
+    const c = createSmartboardClient({ baseUrl: "http://x", getToken: () => "admin" });
+    await c.assignRole("u1", "lecteur");
+    expect(fetchMock).toHaveBeenCalledWith("http://x/v1/admin/users/u1/roles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer admin" },
+      body: JSON.stringify({ roleKey: "lecteur" }),
+    });
+  });
+
+  it("removeRole DELETE .../roles/:key", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({}) });
+    vi.stubGlobal("fetch", fetchMock);
+    const c = createSmartboardClient({ baseUrl: "http://x", getToken: () => "admin" });
+    await c.removeRole("u1", "admin");
+    expect(fetchMock).toHaveBeenCalledWith("http://x/v1/admin/users/u1/roles/admin", {
+      method: "DELETE",
+      headers: { Authorization: "Bearer admin" },
+    });
+  });
 });
