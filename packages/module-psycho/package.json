@@ -1,0 +1,33 @@
+{
+  "name": "@smartboard/module-psycho",
+  "version": "0.1.0",
+  "exports": {
+    "./backend": {
+      "types": "./dist/backend/index.d.ts",
+      "default": "./dist/backend/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "backend": [
+        "dist/backend/index.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@smartboard/contracts": "*"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^10.3.0",
+    "@smartboard/contracts": "workspace:*",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "vitest": "^1.6.0",
+    "typescript": "^5.4.5"
+  }
+}
