@@ -1,6 +1,8 @@
 import {
   Box,
+  Calendar,
   FileText,
+  Home,
   LayoutDashboard,
   Shield,
   Settings,
@@ -11,7 +13,9 @@ import {
 // Mapping string (contrat agnostique) -> composant lucide. Étendre au besoin.
 const registry: Record<string, LucideIcon> = {
   box: Box,
+  calendar: Calendar,
   "file-text": FileText,
+  home: Home,
   "layout-dashboard": LayoutDashboard,
   shield: Shield,
   settings: Settings,
