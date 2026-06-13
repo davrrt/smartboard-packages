@@ -1,6 +1,7 @@
 import {
   Box,
   Calendar,
+  ClipboardList,
   FileText,
   Home,
   LayoutDashboard,
@@ -14,6 +15,7 @@ import {
 const registry: Record<string, LucideIcon> = {
   box: Box,
   calendar: Calendar,
+  "clipboard-list": ClipboardList,
   "file-text": FileText,
   home: Home,
   "layout-dashboard": LayoutDashboard,
