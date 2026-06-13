@@ -132,6 +132,8 @@ export interface CreateTreatmentInput {
 
 export type HomeworkStatus = "PENDING" | "DONE" | "SKIPPED";
 
+export type HomeworkContentType = 'url' | 'video' | 'image' | 'fichier' | 'texte';
+
 export interface Homework {
   id: string;
   title: string;
@@ -139,12 +141,29 @@ export interface Homework {
   dueDate: string | null;
   status: HomeworkStatus;
   createdAt: string;
+  contentType: HomeworkContentType | null;
+  contentUrl: string | null;
 }
 
 export interface CreateHomeworkInput {
   title: string;
   description?: string;
   dueDate?: string;
+  notifyAt?: string;
+  contentType?: HomeworkContentType;
+  contentUrl?: string;
+}
+
+// ─── Telegram ─────────────────────────────────────────────────────────────────
+
+export interface TelegramLinkToken {
+  token: string;
+  expiresAt: string;
+}
+
+export interface TelegramStatus {
+  linked: boolean;
+  linkedAt: string | null;
 }
 
 // ─── Évolution ────────────────────────────────────────────────────────────────
@@ -231,6 +250,9 @@ export interface SmartboardClient {
   // Évolution
   listEvolution(patientId: string): Promise<Evolution[]>;
   createEvolution(patientId: string, input: CreateEvolutionInput): Promise<Evolution>;
+  // Telegram
+  generateTelegramToken(patientId: string): Promise<TelegramLinkToken>;
+  getTelegramStatus(patientId: string): Promise<TelegramStatus>;
 }
 
 // ─── Client implementation ────────────────────────────────────────────────────
@@ -313,5 +335,10 @@ export function createSmartboardClient(opts: SmartboardClientOptions): Smartboar
     listEvolution: (patientId) => r<Evolution[]>(`/v1/patients/${patientId}/evolution`),
     createEvolution: (patientId, input) =>
       r<Evolution>(`/v1/patients/${patientId}/evolution`, { method: "POST", ...json(input) }),
+
+    generateTelegramToken: (patientId) =>
+      r<TelegramLinkToken>(`/v1/telegram/patients/${patientId}/token`, { method: "POST" }),
+    getTelegramStatus: (patientId) =>
+      r<TelegramStatus>(`/v1/telegram/patients/${patientId}/status`),
   };
 }
