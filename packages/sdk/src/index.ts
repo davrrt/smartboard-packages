@@ -216,6 +216,45 @@ export class SmartboardApiError extends Error {
   }
 }
 
+// ─── Agent IA ─────────────────────────────────────────────────────────────────
+
+export interface AgentSession {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages?: Array<{ role: string; content: string }>;
+}
+
+export interface AgentMessage {
+  id: string;
+  sessionId: string;
+  role: "user" | "assistant";
+  content: string;
+  attachments: Array<{ name: string; type: string; mimeType: string }>;
+  createdAt: string;
+}
+
+export interface SendMessageInput {
+  content: string;
+  attachments?: Array<{ name: string; type: "pdf" | "text" | "image"; data: string; mimeType: string }>;
+}
+
+export interface SendMessageResult {
+  userMessage: AgentMessage;
+  assistantMessage: AgentMessage;
+}
+
+export interface QuotaStatus {
+  plan: string;
+  monthlyBudgetUsd: number;
+  hardLimitUsd: number;
+  spentUsd: number;
+  remainingUsd: number;
+  percentUsed: number;
+  status: "ok" | "warning" | "exceeded";
+}
+
 // ─── Client interface ─────────────────────────────────────────────────────────
 
 export interface SmartboardClient {
@@ -253,6 +292,12 @@ export interface SmartboardClient {
   // Telegram
   generateTelegramToken(patientId: string): Promise<TelegramLinkToken>;
   getTelegramStatus(patientId: string): Promise<TelegramStatus>;
+  // Agent IA
+  createAgentSession(title?: string): Promise<AgentSession>;
+  listAgentSessions(limit?: number): Promise<AgentSession[]>;
+  getAgentSession(sessionId: string): Promise<AgentSession & { messages: AgentMessage[] }>;
+  sendAgentMessage(sessionId: string, input: SendMessageInput): Promise<SendMessageResult>;
+  getQuota(): Promise<QuotaStatus>;
 }
 
 // ─── Client implementation ────────────────────────────────────────────────────
@@ -340,5 +385,15 @@ export function createSmartboardClient(opts: SmartboardClientOptions): Smartboar
       r<TelegramLinkToken>(`/v1/telegram/patients/${patientId}/token`, { method: "POST" }),
     getTelegramStatus: (patientId) =>
       r<TelegramStatus>(`/v1/telegram/patients/${patientId}/status`),
+
+    createAgentSession: (title?) =>
+      r<AgentSession>("/v1/agent/sessions", { method: "POST", ...json({ title }) }),
+    listAgentSessions: (limit = 5) =>
+      r<AgentSession[]>(`/v1/agent/sessions?limit=${limit}`),
+    getAgentSession: (sessionId) =>
+      r<AgentSession & { messages: AgentMessage[] }>(`/v1/agent/sessions/${sessionId}`),
+    sendAgentMessage: (sessionId, input) =>
+      r<SendMessageResult>(`/v1/agent/sessions/${sessionId}/messages`, { method: "POST", ...json(input) }),
+    getQuota: () => r<QuotaStatus>("/v1/quota/me"),
   };
 }
