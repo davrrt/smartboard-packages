@@ -255,6 +255,19 @@ export interface QuotaStatus {
   status: "ok" | "warning" | "exceeded";
 }
 
+export type RagDocumentStatus = "UPLOADED" | "PROCESSING" | "INDEXED" | "FAILED";
+
+export interface RagDocument {
+  id: string;
+  title: string;
+  mimeType: string;
+  status: RagDocumentStatus;
+  confidentialityLevel: string;
+  patientId: string | null;
+  createdAt: string;
+  _count?: { chunks: number };
+}
+
 // ─── Client interface ─────────────────────────────────────────────────────────
 
 export interface SmartboardClient {
@@ -298,6 +311,10 @@ export interface SmartboardClient {
   getAgentSession(sessionId: string): Promise<AgentSession & { messages: AgentMessage[] }>;
   sendAgentMessage(sessionId: string, input: SendMessageInput): Promise<SendMessageResult>;
   getQuota(): Promise<QuotaStatus>;
+  // Documents RAG
+  listDocuments(patientId?: string): Promise<RagDocument[]>;
+  deleteDocument(id: string): Promise<{ deleted: boolean }>;
+  reindexDocument(id: string): Promise<{ status: string }>;
 }
 
 // ─── Client implementation ────────────────────────────────────────────────────
@@ -395,5 +412,11 @@ export function createSmartboardClient(opts: SmartboardClientOptions): Smartboar
     sendAgentMessage: (sessionId, input) =>
       r<SendMessageResult>(`/v1/agent/sessions/${sessionId}/messages`, { method: "POST", ...json(input) }),
     getQuota: () => r<QuotaStatus>("/v1/quota/me"),
+    listDocuments: (patientId?) => {
+      const qs = patientId ? `?patientId=${encodeURIComponent(patientId)}` : "";
+      return r<RagDocument[]>(`/v1/documents${qs}`);
+    },
+    deleteDocument: (id) => r<{ deleted: boolean }>(`/v1/documents/${id}`, { method: "DELETE" }),
+    reindexDocument: (id) => r<{ status: string }>(`/v1/documents/${id}/reindex`, { method: "POST" }),
   };
 }
